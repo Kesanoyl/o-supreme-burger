@@ -163,7 +163,7 @@ app.get('/api/order-by-session/:sessionId', async (req, res) => {
     if (order.status === 'pending') {
       await updateOrderStatus(order.order_number, 'paid');
       order.status = 'paid';
-      sendPush(order.customer_phone, 'O Suprême Burger', `✅ Commande #${order.order_number} confirmée ! Prête dans ~${order.prep_minutes || 15} min.`);
+      sendPush(order.customer_phone, `✅ Commande #${order.order_number} confirmée !`, `Prête dans ~${order.prep_minutes || 15} min. Merci !`);
     }
     res.json({
       orderNumber: order.order_number,
@@ -287,8 +287,8 @@ app.post('/api/admin/order/:number/status', async (req, res) => {
     const order = await updateOrderStatus(parseInt(req.params.number), status);
     if (!order) return res.status(404).json({ error: 'Commande introuvable' });
     const num = order.order_number;
-    if (status === 'preparing') sendPush(order.customer_phone, 'O Suprême Burger', `👨‍🍳 On prépare votre commande #${num} !`);
-    else if (status === 'ready') sendPush(order.customer_phone, 'O Suprême Burger', `🎉 Votre commande #${num} est prête ! Venez la récupérer.`);
+    if (status === 'preparing') sendPush(order.customer_phone, '👨‍🍳 En préparation', `Votre commande #${num} est en cours de préparation.`);
+    else if (status === 'ready') sendPush(order.customer_phone, '🎉 Votre commande est prête !', `Commande #${num} — venez la récupérer.`);
     res.json({ ok: true, status: order.status });
   } catch (err) {
     res.status(500).json({ error: err.message });

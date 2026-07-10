@@ -143,7 +143,7 @@ const SAUCES_OS = ['Ketchup','Mayonnaise','Barbecue','Algérienne','Samouraï','
   const byId=Object.fromEntries(MENU.map(m=>[m.id,m]));
   const sauce2={list:SAUCES_OS,count:2};
   // 1) Menu Ô Suprême Deal : choix de la sauce + de la boisson
-  MENU.filter(m=>m.cat==='deals').forEach(m=>{ m.custom=Object.assign({},m.custom,{sauces:sauce2,boissonMenu:DRINKS}); });
+  MENU.filter(m=>m.cat==='deals').forEach(m=>{ m.custom=Object.assign({},m.custom,{sauces:sauce2,boissonMenu:DRINKS,accompagnement:['Frites','Potatoes']}); });
   // 2) Burgers : sauces au choix + option "En menu" (frite/potatoes + boisson +3,50 €)
   MENU.filter(m=>m.cat==='burgers').forEach(m=>{ m.custom=Object.assign({menu:3.50},m.custom,{sauces:sauce2}); });
   // 3) Wraps : sauces + option "En menu" (la salade reste nature)
@@ -538,7 +538,7 @@ function openModal(itemId, existingCartItem) {
     if(c.condiments)editState.condiments=[...(c.condiments.default||c.condiments.list)];
     if(c.plat)editState.plat=c.plat[0];
     if(c.crudites)editState.crudites='Salade+Tomates+Oignons';
-    if(c.menu){editState.menu=false;editState.boissonMenu=DRINKS[0];}
+    if(c.menu){editState.menu=false;editState.boissonMenu=DRINKS[0];editState.accompagnement='Frites';}
   }
 
   $('custom-title').textContent=item.emoji+' '+item.name;
@@ -650,7 +650,7 @@ function buildModalHTML(c) {
   // Condiments (multi, max) + "Sans condiment"
   if(c.condiments){const mx=c.condiments.max||5;h+='<div class="custom-group"><label class="custom-label">🥗 Condiments <span class="custom-hint">('+mx+' max)</span></label><div class="sauce-grid">'+c.condiments.list.map(v=>'<button class="sauce-pill multi" data-key="condiments" data-val="'+v+'">'+v+'</button>').join('')+'<button class="sauce-pill multi" data-key="condiments" data-val="Sans condiment">🚫 Sans condiment</button></div></div>';}
   // Menu toggle (burgers, sandwichs)
-  if(c.menu){h+='<div class="custom-group"><label class="custom-label">🍟 En Menu ? <span class="custom-badge">+'+fmt(c.menu)+' = frites + boisson</span></label><div class="toggle-row"><button class="toggle-btn" data-key="menu" data-val="non">Non</button><button class="toggle-btn" data-key="menu" data-val="oui">Oui</button></div><div class="custom-group" id="drink-group" hidden><label class="custom-label">🥤 Boisson</label><div class="sauce-grid">'+DRINKS.map(d=>'<button class="sauce-pill" data-key="boissonMenu" data-val="'+d+'">'+d+'</button>').join('')+'</div></div></div>';}
+  if(c.menu){h+='<div class="custom-group"><label class="custom-label">🍟 En Menu ? <span class="custom-badge">+'+fmt(c.menu)+' = frites/potatoes + boisson</span></label><div class="toggle-row"><button class="toggle-btn" data-key="menu" data-val="non">Non</button><button class="toggle-btn" data-key="menu" data-val="oui">Oui</button></div><div class="custom-group" id="drink-group" hidden><label class="custom-label">🍟 Accompagnement</label><div class="sauce-grid"><button class="sauce-pill" data-key="accompagnement" data-val="Frites">Frites</button><button class="sauce-pill" data-key="accompagnement" data-val="Potatoes">Potatoes</button></div><label class="custom-label" style="margin-top:14px;">🥤 Boisson</label><div class="sauce-grid">'+DRINKS.map(d=>'<button class="sauce-pill" data-key="boissonMenu" data-val="'+d+'">'+d+'</button>').join('')+'</div></div></div>';}
   // Plat (enfant) — avant les sauces
   if(c.plat){h+='<div class="custom-group"><label class="custom-label">🍽️ Plat</label><div class="toggle-row">'+c.plat.map(v=>'<button class="toggle-btn" data-key="plat" data-val="'+v+'">'+v+'</button>').join('')+'</div></div>';}
   // Sauces (multi-count)
@@ -798,7 +798,7 @@ function confirmProduct(){
   let l='';
   if(c.gratinage&&editState.gratinage)l+='Gratiné '+editState.gratinage;
   if(editState.viandes?.length)l+=(l?' • ':'')+editState.viandes.join('+');
-  if(c.accompagnement&&editState.accompagnement)l+=(l?' • ':'')+editState.accompagnement;
+  if((c.accompagnement||(c.menu&&editState.menu))&&editState.accompagnement)l+=(l?' • ':'')+editState.accompagnement;
   if(c.crudites&&editState.crudites)l+=(l?' • ':'')+'Crudités: '+editState.crudites;
   if(c.burgerChoice&&editState.burgerChoice)l+=(l?' • ':'')+'Burger: '+editState.burgerChoice;
   if(c.burger2Choice&&editState.burger2Choice)l+=(l?' • ':'')+'Burger 2: '+editState.burger2Choice;
@@ -810,7 +810,7 @@ function confirmProduct(){
   if(c.pain&&editState.pain)l+=(l?' • ':'')+'Pain: '+editState.pain;
   if(c.condiments)l+=(l?' • ':'')+'Condiments: '+((editState.condiments&&editState.condiments.length)?editState.condiments.join('+'):'Sans');
   if(editState.sauces?.length)l+=(l?' • ':'')+'Sauces: '+editState.sauces.join('+');
-  if(c.boissonMenu&&editState.boissonMenu)l+=(l?' • ':'')+'Boisson: '+editState.boissonMenu;
+  if((c.boissonMenu||(c.menu&&editState.menu))&&editState.boissonMenu)l+=(l?' • ':'')+'Boisson: '+editState.boissonMenu;
   if(c.plat&&editState.plat)l+=(l?' • ':'')+editState.plat;
   const baseLabel=l;
   const extrasLabel=editState.extras?.length?editState.extras.join(', '):'';
@@ -825,7 +825,7 @@ function confirmProduct(){
     else exSupps.push(nm);
   });
   const comp=[];
-  if(c.menu&&editState.menu)comp.push({i:'🍟',k:'Menu',base:['Frites + boisson'],extra:[]});
+  if(c.menu&&editState.menu)comp.push({i:'🍟',k:'Menu',base:[(editState.accompagnement||'Frites')+' + '+(editState.boissonMenu||'boisson')],extra:[]});
   if(c.gratinage&&editState.gratinage)comp.push({i:'🧀',k:'Gratiné',base:[editState.gratinage],extra:[]});
   if((editState.viandes&&editState.viandes.length)||exViandes.length)comp.push({i:'🍖',k:'Viandes',base:editState.viandes||[],extra:exViandes});
   if(c.accompagnement&&editState.accompagnement)comp.push({i:'🍟',k:'Accomp.',base:[editState.accompagnement],extra:[]});

@@ -188,6 +188,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initCounters();
   initParticles();
   updateCartUI();
+  // Fiabilise le ciblage des notifs : lie l'abonnement push au numéro déjà connu
+  try{ const sc=JSON.parse(localStorage.getItem('osupreme_customer')||'null'); if(sc&&sc.phone){(window.OneSignalDeferred=window.OneSignalDeferred||[]).push(o=>o.login(sc.phone.replace(/\s/g,''))); } }catch(e){}
 });
 
 // ═══ LOADER ══════════════════════════════════════════════════

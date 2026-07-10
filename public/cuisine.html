@@ -38,6 +38,12 @@
     .k-v { color: var(--text); font-weight: 700; font-size: 1.08rem; min-width: 0; overflow-wrap: anywhere; }
     .k-x { color: var(--fuego); font-weight: 800; }
     .kitchen-meta { word-break: break-word; }
+    .kitchen-actions { display: flex; gap: 8px; margin-top: 14px; }
+    .k-btn { flex: 1; padding: 13px 10px; border-radius: 10px; font-weight: 800; font-size: 0.95rem; cursor: pointer; border: none; color: #fff; transition: transform .12s, filter .2s; }
+    .k-btn:active { transform: scale(0.96); }
+    .k-btn.k-prep { background: var(--fuego); }
+    .k-btn.k-ready { background: #3fae44; }
+    .k-btn.k-done { background: var(--rojo); }
   </style>
 </head>
 <body style="background:var(--bg);">
@@ -99,6 +105,10 @@
             '</div>';
           }).join('');
 
+          const actions =
+            (o.status==='paid' ? '<button class="k-btn k-prep" onclick="setStatus('+o.orderNumber+',\'preparing\')">👨‍🍳 En préparation</button>' : '') +
+            (o.status==='preparing' ? '<button class="k-btn k-ready" onclick="setStatus('+o.orderNumber+',\'ready\')">🎉 Commande prête</button>' : '') +
+            (o.status==='ready' ? '<button class="k-btn k-done" onclick="setStatus('+o.orderNumber+',\'picked_up\')">🏃 Récupérée</button>' : '');
           return '<div class="kitchen-card '+o.status+'">'+
             '<div class="kitchen-card-header">'+
             '<span class="kitchen-num">#'+o.orderNumber+'</span>'+
@@ -109,11 +119,19 @@
             '👤 '+(o.name||'Client')+' · 📞 '+o.phone+' · '+
             '<span class="kitchen-delivery '+(o.deliveryType==='delivery'?'badge-delivery':'badge-pickup')+'">'+(o.deliveryType==='delivery'?'🛵 Livraison':'🏃 Emporter')+'</span>'+
             (o.deliveryAddress ? ' · 📍 '+o.deliveryAddress : '') +
-            '</div></div>';
+            '</div>'+
+            '<div class="kitchen-actions">'+actions+'</div>'+
+            '</div>';
         }).join('');
       } catch(e) {
         document.getElementById('kitchen-grid').innerHTML = '<p style="color:var(--rojo);grid-column:1/-1;text-align:center;">Erreur de connexion</p>';
       }
+    }
+    async function setStatus(num, status){
+      try{
+        await fetch('/api/admin/order/'+num+'/status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});
+        load();
+      }catch(e){ alert('Erreur réseau'); }
     }
     load();
     setInterval(load, 8000);

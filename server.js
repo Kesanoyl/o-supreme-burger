@@ -21,6 +21,29 @@ const PUBLIC_URL = process.env.PUBLIC_URL || `http://localhost:${PORT}`;
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_dummy');
 
+// ─── OneSignal (notifications push) ───────────────────────
+const ONESIGNAL_APP_ID = process.env.ONESIGNAL_APP_ID || 'faf2ece8-01f9-431d-97f0-e91e039baad8';
+const ONESIGNAL_REST_KEY = process.env.ONESIGNAL_REST_API_KEY || '';
+async function sendPush(phone, title, message) {
+  if (!ONESIGNAL_REST_KEY || !phone) return;
+  try {
+    const res = await fetch('https://onesignal.com/api/v1/notifications', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Key ' + ONESIGNAL_REST_KEY },
+      body: JSON.stringify({
+        app_id: ONESIGNAL_APP_ID,
+        include_aliases: { external_id: [String(phone).replace(/\s/g, '')] },
+        target_channel: 'push',
+        headings: { en: title, fr: title },
+        contents: { en: message, fr: message },
+        url: PUBLIC_URL,
+      }),
+    });
+    const j = await res.json();
+    console.log('[OneSignal] →', phone, j.id ? 'envoyée ' + j.id : JSON.stringify(j.errors || j));
+  } catch (e) { console.error('[OneSignal] erreur', e.message); }
+}
+
 const app = express();
 
 // ─── MIDDLEWARE ───────────────────────────────────────────
@@ -140,6 +163,7 @@ app.get('/api/order-by-session/:sessionId', async (req, res) => {
     if (order.status === 'pending') {
       await updateOrderStatus(order.order_number, 'paid');
       order.status = 'paid';
+      sendPush(order.customer_phone, 'O Suprême Burger', `✅ Commande #${order.order_number} confirmée ! Prête dans ~${order.prep_minutes || 15} min.`);
     }
     res.json({
       orderNumber: order.order_number,
@@ -262,6 +286,9 @@ app.post('/api/admin/order/:number/status', async (req, res) => {
     }
     const order = await updateOrderStatus(parseInt(req.params.number), status);
     if (!order) return res.status(404).json({ error: 'Commande introuvable' });
+    const num = order.order_number;
+    if (status === 'preparing') sendPush(order.customer_phone, 'O Suprême Burger', `👨‍🍳 On prépare votre commande #${num} !`);
+    else if (status === 'ready') sendPush(order.customer_phone, 'O Suprême Burger', `🎉 Votre commande #${num} est prête ! Venez la récupérer.`);
     res.json({ ok: true, status: order.status });
   } catch (err) {
     res.status(500).json({ error: err.message });

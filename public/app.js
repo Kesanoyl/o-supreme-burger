@@ -969,6 +969,8 @@ function refreshCheckoutPrice(){
 async function startPayment(){
   const phone=$('checkout-phone').value.trim();
   if(!phone||phone.length<8){showToast('Téléphone requis','error');return;}
+  // Lie l'abonnement push OneSignal à ce numéro (pour les notifs de suivi de commande)
+  try{ (window.OneSignalDeferred=window.OneSignalDeferred||[]).push(o=>o.login(phone.replace(/\s/g,''))); }catch(e){}
   if($('checkout-remember').checked){localStorage.setItem('osupreme_customer',JSON.stringify({phone,name:$('checkout-name').value.trim()}));}
   $('checkout-pay-btn').disabled=true;$('checkout-pay-btn').textContent='⏳ Préparation...';
   try{

@@ -121,7 +121,7 @@ const MENU = [
   { id:'boissons-orangina-33-cl', cat:'boissons', name:'Orangina 33 cl', desc:'Canette 33 cl.', price:1.80, emoji:'🧊', img:'boissons-orangina-33-cl.jpg' },
   { id:'boissons-ice-tea-33-cl', cat:'boissons', name:'Ice Tea 33 cl', desc:'Canette 33 cl.', price:1.80, emoji:'🧊', img:'boissons-lipton-ice-tea-pêche-33-cl.jpg' },
   { id:'boissons-oasis-tropical-33-cl', cat:'boissons', name:'Oasis Tropical 33 cl', desc:'Canette 33 cl.', price:1.80, emoji:'🧊', img:'boissons-oasis-tropical-33-cl.jpg' },
-  { id:'boissons-hawai-33-cl', cat:'boissons', name:'Hawaï 33 cl', desc:'Canette 33 cl.', price:1.80, emoji:'🧊', img:'boissons-oasis-pomme-cassis-framboise-33-cl.jpg' },
+  { id:'boissons-oasis-pomme-cassis-33-cl', cat:'boissons', name:'Oasis Pomme Cassis Framboise 33 cl', desc:'Canette 33 cl.', price:1.80, emoji:'🧊', img:'boissons-oasis-pomme-cassis-framboise-33-cl.jpg' },
   { id:'boissons-7up-mojito-33-cl', cat:'boissons', name:'7 Up Mojito 33 cl', desc:'Canette 33 cl.', price:1.80, emoji:'🧊', img:'boissons-7up-33-cl.jpg' },
   { id:'boissons-fanta-orange-33-cl', cat:'boissons', name:'Fanta Orange 33 cl', desc:'Canette 33 cl.', price:1.80, emoji:'🧊', img:'boissons-fanta-orange-33-cl.jpg' },
 ];

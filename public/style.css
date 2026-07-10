@@ -1380,15 +1380,16 @@ body.scroll-locked {
 }
 
 /* ─── PERFORMANCE / FLUIDITÉ ──────────────────────────────── */
-/* Sur mobile : on coupe les flous "verre dépoli" (recalculés à chaque scroll) */
-@media (max-width: 768px) {
-  .nav, .nav::before, .menu-filters-wrapper, .back-to-top {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
-  .menu-filters-wrapper { background: rgba(16,14,12,0.98); }
-  .nav::before { background: rgba(12,11,9,0.95); }
+/* Flous "verre dépoli" désactivés partout : recalculés à chaque scroll, ils
+   saccadent sur PC quand l'accélération GPU du navigateur est coupée.
+   Fonds rendus opaques → même rendu visuel, sans le coût. */
+.nav, .nav::before, .menu-filters-wrapper, .back-to-top,
+.checkout-overlay, .cart-overlay, .custom-overlay {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
+.menu-filters-wrapper { background: rgba(16,14,12,0.98); }
+.nav::before { background: rgba(12,11,9,0.92); }
 
 /* Respecte le réglage système "animations réduites" */
 @media (prefers-reduced-motion: reduce) {

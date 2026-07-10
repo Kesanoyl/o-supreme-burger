@@ -1028,7 +1028,7 @@ function initParticles(){
     update(){this.y+=this.speedY;this.x+=this.speedX+Math.sin(this.life*0.02)*0.2;this.life++;this.opacity=Math.max(0,this.opacity-0.001);if(this.life>this.maxLife||this.y<-20||this.opacity<=0)this.reset();}
     draw(c){c.beginPath();c.arc(this.x,this.y,this.size,0,Math.PI*2);c.fillStyle='rgba('+this.color.join(',')+','+this.opacity+')';c.fill();}
   }
-  for(let i=0;i<26;i++){const p=new Particle();p.y=Math.random()*canvas.height;p.life=Math.random()*p.maxLife;particles.push(p);}
+  for(let i=0;i<16;i++){const p=new Particle();p.y=Math.random()*canvas.height;p.life=Math.random()*p.maxLife;particles.push(p);}
   let running=true;
   function animate(){if(!running)return;ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{p.update();p.draw(ctx);});requestAnimationFrame(animate);}
   // Pause quand l'onglet n'est pas visible (économise CPU/batterie)

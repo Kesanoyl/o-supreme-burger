@@ -53,9 +53,9 @@ const DRINKS = ['Coca Cola','Coca Zéro','Coca Cherry','Orangina','Ice Tea','Oas
 const KIDS_DRINKS = ['Capri-Sun','Coca Cola','Oasis Tropical','Ice Tea'];
 const COND = { list:['Salade','Tomate','Oignon','Cornichons','Sauce fromagère'], max:5, default:['Salade','Tomate','Oignon'] };
 
-// MENU - Carte Ô Suprême Burger (Besançon)
+// MENU - Carte O Suprême Burger (Besançon)
 const MENU = [
-  // ── Menu Ô Suprême Deal (servi avec frite + boisson 33 cl) ──
+  // ── Menu O Suprême Deal (servi avec frite + boisson 33 cl) ──
   { id:'deals-s1', cat:'deals', name:'S1 · Double Cheese + Cheese', desc:'1 double cheese + 1 cheese, servi avec frite et boisson 33 cl.', price:10.00, emoji:'🍔', img:'deals-s1.jpg' },
   { id:'deals-s2', cat:'deals', name:'S2 · Big Mak + Cheese', desc:'1 big mak + 1 cheese, servi avec frite et boisson 33 cl.', price:12.50, emoji:'🍔', img:'deals-s2.jpg' },
   { id:'deals-s3', cat:'deals', name:'S3 · Géant + Big Mak', desc:'1 géant + 1 big mak, servi avec frite et boisson 33 cl.', price:15.50, emoji:'🍔', img:'deals-s3.jpg', tag:'Populaire', tagClass:'tag-top' },
@@ -127,7 +127,7 @@ const MENU = [
 ];
 
 const CAT_NAMES = {
-  'deals':'🔥 Menu Ô Suprême Deal',
+  'deals':'🔥 Menu O Suprême Deal',
   'burgers':'🍔 Burgers',
   'wraps':'🌯 Wraps & Salades',
   'tex-mex':'🍗 Tex Mex',
@@ -142,7 +142,7 @@ const SAUCES_OS = ['Ketchup','Mayonnaise','Barbecue','Algérienne','Samouraï','
 (function applyMenuOverrides(){
   const byId=Object.fromEntries(MENU.map(m=>[m.id,m]));
   const sauce2={list:SAUCES_OS,count:2};
-  // 1) Menu Ô Suprême Deal : choix de la sauce + de la boisson
+  // 1) Menu O Suprême Deal : choix de la sauce + de la boisson
   MENU.filter(m=>m.cat==='deals').forEach(m=>{ m.custom=Object.assign({},m.custom,{sauces:sauce2,boissonMenu:DRINKS,accompagnement:['Frites','Potatoes']}); });
   // 2) Burgers : sauces au choix + option "En menu" (frite/potatoes + boisson +3,50 €)
   MENU.filter(m=>m.cat==='burgers').forEach(m=>{ m.custom=Object.assign({menu:3.50},m.custom,{sauces:sauce2}); });

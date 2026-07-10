@@ -1,5 +1,5 @@
 /* ============================================================
-   Ô Suprême Burger — Database (PostgreSQL / JSON fallback)
+   O Suprême Burger — Database (PostgreSQL / JSON fallback)
    ============================================================ */
 import pg from 'pg';
 import dotenv from 'dotenv';

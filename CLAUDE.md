@@ -1,9 +1,9 @@
-# Ô Suprême Burger — Site Click & Collect
+# O Suprême Burger — Site Click & Collect
 
 ## Résumé
-Site de commande en ligne pour **Ô Suprême Burger** (Besançon, 25000). Fast-food — Burgers maison, menus deals (S1–S12), tex mex, desserts. 100% halal. Commande + paiement en ligne + compte client.
+Site de commande en ligne pour **O Suprême Burger** (Besançon, 25000). Fast-food — Burgers maison, menus deals (S1–S12), tex mex, desserts. 100% halal. Commande + paiement en ligne + compte client.
 
-Dupliqué depuis le site **Bikers Food** (même moteur), avec carte, coordonnées et textes adaptés à Ô Suprême Burger. Le "Composer" de tacos est retiré (carte à base de menus fixes).
+Dupliqué depuis le site **Bikers Food** (même moteur), avec carte, coordonnées et textes adaptés à O Suprême Burger. Le "Composer" de tacos est retiré (carte à base de menus fixes).
 
 ## Stack
 - **Backend** : Node.js + Express (`server.js`), ES modules

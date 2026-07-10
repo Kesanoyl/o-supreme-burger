@@ -1,0 +1,14 @@
+{
+  "name": "Ô Suprême Burger",
+  "short_name": "Ô Suprême",
+  "description": "Burgers maison, menus deals & tex mex, 100% halal — Click & Collect à Besançon.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#060606",
+  "theme_color": "#060606",
+  "icons": [
+    { "src": "img/app-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "img/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "img/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

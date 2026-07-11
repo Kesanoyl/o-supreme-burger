@@ -943,7 +943,30 @@ function closeCart(){$('cart-panel').classList.remove('open');$('cart-overlay').
 
 // ═══ CHECKOUT ═════════════════════════════════════════════════
 let orderMode='emporter';
+// ═══ TÉLÉPHONE ════════════════════════════════════════════════
+// Affichage groupé par 2 (07 12 12 12 12). On n'envoie JAMAIS les espaces au
+// serveur : le numéro stocké reste en chiffres bruts, sinon le suivi de
+// commande ne retrouverait plus les commandes déjà enregistrées.
+function phoneDigits(v){ return (v||'').replace(/\D/g,'').slice(0,10); }
+function phonePretty(v){ return (phoneDigits(v).match(/\d{1,2}/g)||[]).join(' '); }
+function bindPhoneInput(el){
+  if(!el)return;
+  el.addEventListener('input',()=>{
+    const atEnd = el.selectionStart===el.value.length;
+    const before = el.value.slice(0,el.selectionStart).replace(/\D/g,'').length;
+    el.value = phonePretty(el.value);
+    if(atEnd){ el.setSelectionRange(el.value.length,el.value.length); }
+    else {
+      let seen=0,pos=el.value.length;
+      for(let i=0;i<el.value.length;i++){ if(/\d/.test(el.value[i]))seen++; if(seen===before){pos=i+1;break;} }
+      el.setSelectionRange(pos,pos);
+    }
+  });
+}
+
 function initCheckout(){
+  bindPhoneInput($('checkout-phone'));
+  bindPhoneInput($('track-phone'));
   $('checkout-back').addEventListener('click',closeCheckout);
   $('checkout-overlay').addEventListener('click',closeCheckout);
   $('checkout-pay-btn').addEventListener('click',startPayment);
@@ -953,7 +976,7 @@ function initCheckout(){
     $('order-mode-row').querySelectorAll('.toggle-btn').forEach(b=>b.classList.toggle('active',b.dataset.val===orderMode));
   });
   const saved=JSON.parse(localStorage.getItem('osupreme_customer')||'{}');
-  if(saved.phone)$('checkout-phone').value=saved.phone;
+  if(saved.phone)$('checkout-phone').value=phonePretty(saved.phone);
   if(saved.name)$('checkout-name').value=saved.name;
 }
 
@@ -969,10 +992,10 @@ function refreshCheckoutPrice(){
 }
 
 async function startPayment(){
-  const phone=$('checkout-phone').value.trim();
-  if(!phone||phone.length<8){showToast('Téléphone requis','error');return;}
+  const phone=phoneDigits($('checkout-phone').value);
+  if(phone.length<10){showToast('Téléphone requis (10 chiffres)','error');return;}
   // Lie l'abonnement push OneSignal à ce numéro (pour les notifs de suivi de commande)
-  try{ (window.OneSignalDeferred=window.OneSignalDeferred||[]).push(o=>o.login(phone.replace(/\s/g,''))); }catch(e){}
+  try{ (window.OneSignalDeferred=window.OneSignalDeferred||[]).push(o=>o.login(phone)); }catch(e){}
   if($('checkout-remember').checked){localStorage.setItem('osupreme_customer',JSON.stringify({phone,name:$('checkout-name').value.trim()}));}
   $('checkout-pay-btn').disabled=true;$('checkout-pay-btn').textContent='⏳ Préparation...';
   try{
@@ -997,11 +1020,11 @@ async function startPayment(){
 }
 
 // ═══ TRACKING ═════════════════════════════════════════════════
-function openTrack(){$('track-modal').classList.add('open');$('track-overlay').classList.add('open');lockScroll();const saved=JSON.parse(localStorage.getItem('osupreme_customer')||'{}');if(saved.phone)$('track-phone').value=saved.phone;}
+function openTrack(){$('track-modal').classList.add('open');$('track-overlay').classList.add('open');lockScroll();const saved=JSON.parse(localStorage.getItem('osupreme_customer')||'{}');if(saved.phone)$('track-phone').value=phonePretty(saved.phone);}
 $('track-overlay').addEventListener('click',()=>{$('track-modal').classList.remove('open');$('track-overlay').classList.remove('open');unlockScroll();});
 $('track-back').addEventListener('click',()=>{$('track-modal').classList.remove('open');$('track-overlay').classList.remove('open');unlockScroll();});
 $('track-btn').addEventListener('click',async()=>{
-  const phone=$('track-phone').value.trim();if(!phone){showToast('Téléphone requis','error');return;}
+  const phone=phoneDigits($('track-phone').value);if(!phone){showToast('Téléphone requis','error');return;}
   const $res=$('track-result');$res.innerHTML='<p style="color:var(--text-dim);text-align:center;">🔍 Recherche...</p>';
   try{
     const r=await fetch('/api/orders?phone='+encodeURIComponent(phone));const orders=await r.json();
